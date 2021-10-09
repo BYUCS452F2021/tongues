@@ -184,6 +184,9 @@ output = { 'books': [] }
 bom = {'id': 'bom', 'books': []}
 output['books'].append(bom)
 
+map_id = 0
+map_ids = {}
+
 with open(lang1+".txt") as in1, open(lang2 + ".txt") as in2, open(lang1 + "-" + lang2 + "-align.out") as align:
     chapter_obj = None
     book_obj = None
@@ -228,8 +231,17 @@ with open(lang1+".txt") as in1, open(lang2 + ".txt") as in2, open(lang1 + "-" + 
 
             # TODO: remove punctuation? iterate while not alphabetic
 
-            #print(a[a1:a2] + ' -> ' + b[b1:b2])
-            verses.append([a1, a2, b1, b2, -1])
+            mapping = (a[a1:a2], b[b1:b2])
+            if mapping in map_ids.keys():
+                current_id = map_ids[mapping]
+            else:
+                current_id = map_id
+                map_ids[mapping] = current_id
+                map_id += 1
+
+            verses.append([a1, a2, b1, b2, current_id])
+
+print(map_id)
 
 with open(lang1 + "-" + lang2 + ".json", 'w') as out:
     out.write(json.dumps(output))
